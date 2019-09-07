@@ -1,0 +1,4 @@
+*.log
+.history
+node_modules
+/dist
