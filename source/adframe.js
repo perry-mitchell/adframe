@@ -6,23 +6,21 @@ import {
     WRITE_MODE_DOC_WRITE,
     WRITE_MODE_SRCDOC
 } from "./symbols.js";
-import { restoreBuiltIns } from  "./native.js";
+import { restoreBuiltIns } from "./native.js";
 import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 
-const DEFAULT_WRITE_METHODS = [
-    WRITE_MODE_BLOB_URL,
-    WRITE_MODE_SRCDOC,
-    WRITE_MODE_DOC_WRITE
-];
+const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
+const NOOP = () => {};
 
 export function createAdFrame(options) {
     const {
         content,
         contentType = CONTENT_HTML,
         doc = document,
+        onLoadCallback = NOOP,
         parent,
-        position,
+        position = "last",
         restoreBuiltIns: runRestoreBuiltIns = true,
         sandboxFlags = [],
         security = SECURITY_NONE,
@@ -32,14 +30,14 @@ export function createAdFrame(options) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
-    const onLoadPromise = attachOnLoadListener(iframe);
+    attachOnLoadListener(iframe);
     let availableWriteMethods = writeMethods;
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
         // document.write cannot be used when frame is non-friendly
         availableWriteMethods = availableWriteMethods.filter(wm => wm !== WRITE_MODE_DOC_WRITE);
     }
-    const [ chosenWriteMethod ] = availableWriteMethods;
+    const [chosenWriteMethod] = availableWriteMethods;
     if (contentType === CONTENT_URL) {
         iframe.setAttribute("src", content);
     } else if (contentType === CONTENT_HTML) {
@@ -67,18 +65,20 @@ export function createAdFrame(options) {
     if (chosenWriteMethod === WRITE_MODE_DOC_WRITE) {
         writeDocumentContent(iframe, content);
     }
-    return onLoadPromise;
 }
 
 function setIframeBlobURL(iframe, content, mime = "text/html") {
-    const blob = new Blob([content], { type: mime })
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     iframe.setAttribute("src", url);
 }
 
 function setIframeSrcDoc(iframe, content) {
     const encodedContent = win.btoa(encodeURIComponent(content));
-    iframe.setAttribute("srcdoc", `<script>document.open(); document.write(decodeURIComponent(atob('${encodedContent}'))); document.close();</script>`);
+    iframe.setAttribute(
+        "srcdoc",
+        `<script>document.open(); document.write(decodeURIComponent(atob('${encodedContent}'))); document.close();</script>`
+    );
 }
 
 function writeDocumentContent(iframe, content) {

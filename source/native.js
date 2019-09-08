@@ -1,7 +1,4 @@
-const DOCUMENT_BUILTINS = [
-    "createElement",
-    "write"
-];
+const DOCUMENT_BUILTINS = ["createElement", "write"];
 
 export function restoreBuiltIns(doc = document) {
     if (!Object.getPrototypeOf || typeof Object.getPrototypeOf !== "function") {
