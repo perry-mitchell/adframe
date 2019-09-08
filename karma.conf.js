@@ -49,7 +49,21 @@ module.exports = function(config) {
         reporters: ["progress", "coverage"],
 
         coverageReporter: {
-            type: "text-summary"
+            type: "text-summary",
+            check: {
+                global: {
+                    statements: 80,
+                    branches: 20,
+                    functions: 80,
+                    lines: 80
+                }
+            },
+            watermarks: {
+                statements: [ 50, 85 ],
+                functions: [ 50, 85 ],
+                branches: [ 50, 85 ],
+                lines: [ 50, 85 ]
+            }
         },
 
         // web server port
