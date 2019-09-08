@@ -2,6 +2,7 @@ import {
     CONTENT_HTML,
     CONTENT_URL,
     SECURITY_NONE,
+    WRITE_MODE_BLOB_URL,
     WRITE_MODE_DOC_WRITE,
     WRITE_MODE_SRCDOC
 } from "./symbols.js";
@@ -10,6 +11,7 @@ import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 
 const DEFAULT_WRITE_METHODS = [
+    WRITE_MODE_BLOB_URL,
     WRITE_MODE_SRCDOC,
     WRITE_MODE_DOC_WRITE
 ];
@@ -48,6 +50,8 @@ export function createAdFrame(options) {
             throw new Error("No available write methods");
         } else if (chosenWriteMethod === WRITE_MODE_SRCDOC) {
             setIframeSrcDoc(iframe, content);
+        } else if (chosenWriteMethod === WRITE_MODE_BLOB_URL) {
+            setIframeBlobURL(iframe, content);
         }
         // document.write is handled later, after DOM insertion
     } else {
@@ -66,9 +70,15 @@ export function createAdFrame(options) {
     return onLoadPromise;
 }
 
+function setIframeBlobURL(iframe, content, mime = "text/html") {
+    const blob = new Blob([content], { type: mime })
+    const url = URL.createObjectURL(blob);
+    iframe.setAttribute("src", url);
+}
+
 function setIframeSrcDoc(iframe, content) {
     const encodedContent = win.btoa(encodeURIComponent(content));
-    iframe.srcdoc = `<script>document.open(); document.write(decodeURIComponent(atob('${encodedContent}'))); document.close();</script>`
+    iframe.setAttribute("srcdoc", `<script>document.open(); document.write(decodeURIComponent(atob('${encodedContent}'))); document.close();</script>`);
 }
 
 function writeDocumentContent(iframe, content) {
