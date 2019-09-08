@@ -63,6 +63,7 @@ export function createAdFrame(options) {
     if (chosenWriteMethod === WRITE_MODE_DOC_WRITE) {
         writeDocumentContent(iframe, content);
     }
+    return onLoadPromise;
 }
 
 function setIframeSrcDoc(iframe, content) {
