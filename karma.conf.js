@@ -6,6 +6,14 @@ delete webpackConfig.entry;
 delete webpackConfig.output;
 webpackConfig.mode = "development";
 
+const { BROWSER = "chrome" } = process.env;
+const browsers = [];
+if (BROWSER === "chrome") {
+    browsers.push("ChromeNoSecurity");
+} else if (BROWSER === "firefox") {
+    browsers.push("FirefoxHeadless");
+}
+
 module.exports = function(config) {
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -57,12 +65,16 @@ module.exports = function(config) {
             ChromeNoSecurity: {
                 base: "Chrome",
                 flags: ["--disable-web-security", "--headless", "--remote-debugging-port=9222"]
+            },
+            FirefoxHeadless: {
+                base: "Firefox",
+                flags: ["-headless"]
             }
         },
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ["ChromeNoSecurity"],
+        browsers,
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
