@@ -57,7 +57,7 @@ export function createAdFrame(options) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
-    attachOnLoadListener(iframe);
+    attachOnLoadListener(iframe, onLoadCallback);
     let availableWriteMethods = writeMethods;
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {

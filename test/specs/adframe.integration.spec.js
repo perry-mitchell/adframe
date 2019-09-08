@@ -17,4 +17,12 @@ describe("createAdFrame", function() {
         });
         expect(this.container.children[0].tagName).to.match(/^iframe$/i);
     });
+
+    it("fires `onLoadCallback` when iframe loaded", function(done) {
+        createAdFrame({
+            parent: this.container,
+            content: "<br />",
+            onLoadCallback: done
+        });
+    });
 });
