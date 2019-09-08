@@ -13,6 +13,33 @@ import { applySecurityMeasures } from "./security.js";
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
 
+/**
+ * @typedef {Object} CreateAdFrameOptions
+ * @property {String} content - The HTML content to insert, when in HTML content mode, or the
+ *  URL to load when in URL content mode
+ * @property {String=} contentType - The type of content to use - defaults to CONTENT_HTML
+ * @property {HTMLDocument=} doc - The document to use for all element references
+ * @property {Function=} onLoadCallback - Callback method to fire once the iframe has loaded
+ * @property {HTMLElement} parent - The parent element to insert the iframe into
+ * @property {String=} position - Insertion position. Either "first" among other children in
+ *  the parent element or "last".
+ * @property {Boolean=} restoreBuiltIns - Restore built-in document/window methods if they're
+ *  detected as having been overridden. Defaults to true. Can help un-break pages where some
+ *  script has performed some nasty modifications to the page.
+ * @property {Array.<String>=} sandboxFlags - Custom sandbox flags to set when security is set to
+ *  custom mode (SECURITY_CUSTOM)
+ * @property {String=} security - The security mode to use for securing the iframe's contents.
+ *  Defaults to SECURITY_NONE.
+ * @property {Array.<String>=} writeMethods - Write methods that can be used, in order of
+ *  preference. If no write modes can be selected an error will be thrown.
+ */
+
+/**
+ * Create an adframe instance
+ * @param {CreateAdFrameOptions} options Creation options
+ * @returns {HTMLIFrameElement} The created (and inserted) iframe element
+ * @memberof module:AdFrame
+ */
 export function createAdFrame(options) {
     const {
         content,
@@ -65,6 +92,7 @@ export function createAdFrame(options) {
     if (chosenWriteMethod === WRITE_MODE_DOC_WRITE) {
         writeDocumentContent(iframe, content);
     }
+    return iframe;
 }
 
 function setIframeBlobURL(iframe, content, mime = "text/html") {
