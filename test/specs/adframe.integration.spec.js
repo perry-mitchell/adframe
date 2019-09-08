@@ -1,4 +1,9 @@
-import { createAdFrame } from "../../source/index.js";
+import {
+    WRITE_MODE_BLOB_URL,
+    WRITE_MODE_DOC_WRITE,
+    WRITE_MODE_SRCDOC,
+    createAdFrame
+} from "../../source/index.js";
 
 describe("createAdFrame", function() {
     beforeEach(function() {
@@ -23,6 +28,21 @@ describe("createAdFrame", function() {
             parent: this.container,
             content: "<br />",
             onLoadCallback: done
+        });
+    });
+
+    it("renders content using blob URLs", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            writeMethods: [WRITE_MODE_BLOB_URL],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.querySelector("#test"))
+                    .to.have.property("tagName")
+                    .that.matches(/^div$/i);
+                expect(iframe.getAttribute("src")).to.match(/^blob:/);
+                done();
+            }
         });
     });
 });
