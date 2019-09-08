@@ -8,6 +8,7 @@
     "format": "prettier --write '{{source,test}/**/*.js,webpack.config.js}'",
     "dev": "webpack --mode development --watch --progress",
     "docs": "jsdoc2md source/**/*.js > API.md",
+    "prepublishOnly": "run-s build",
     "test": "run-s test:web test:format",
     "test:ci:chrome": "BROWSER=chrome karma start --single-run",
     "test:ci:firefox": "BROWSER=firefox karma start --single-run",
@@ -20,6 +21,10 @@
       "git add"
     ]
   },
+  "files": [
+    "dist/**/*",
+    "API.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/perry-mitchell/adframe.git"
