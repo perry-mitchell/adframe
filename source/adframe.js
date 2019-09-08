@@ -57,7 +57,6 @@ export function createAdFrame(options) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
-    attachOnLoadListener(iframe, onLoadCallback);
     let availableWriteMethods = writeMethods;
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
@@ -66,6 +65,7 @@ export function createAdFrame(options) {
     }
     const [chosenWriteMethod] = availableWriteMethods;
     if (contentType === CONTENT_URL) {
+        attachOnLoadListener(iframe, onLoadCallback);
         iframe.setAttribute("src", content);
     } else if (contentType === CONTENT_HTML) {
         if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
@@ -74,8 +74,10 @@ export function createAdFrame(options) {
         if (!chosenWriteMethod) {
             throw new Error("No available write methods");
         } else if (chosenWriteMethod === WRITE_MODE_SRCDOC) {
+            attachOnLoadListener(iframe, onLoadCallback);
             setIframeSrcDoc(iframe, content);
         } else if (chosenWriteMethod === WRITE_MODE_BLOB_URL) {
+            attachOnLoadListener(iframe, onLoadCallback);
             setIframeBlobURL(iframe, content);
         }
         // document.write is handled later, after DOM insertion
@@ -90,6 +92,7 @@ export function createAdFrame(options) {
         throw new Error(`Invalid insertion position: ${position}`);
     }
     if (chosenWriteMethod === WRITE_MODE_DOC_WRITE) {
+        setTimeout(onLoadCallback, 0);
         writeDocumentContent(iframe, content);
     }
     return iframe;

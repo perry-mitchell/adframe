@@ -45,4 +45,19 @@ describe("createAdFrame", function() {
             }
         });
     });
+
+    it("renders content using document.write", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            writeMethods: [WRITE_MODE_DOC_WRITE],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.querySelector("#test"))
+                    .to.have.property("tagName")
+                    .that.matches(/^div$/i);
+                expect(iframe.getAttribute("src")).to.be.null;
+                done();
+            }
+        });
+    });
 });
