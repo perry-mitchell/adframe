@@ -1,4 +1,10 @@
 const path = require("path");
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
+
+const plugins = [];
+if (process.env.ANALYZER === "bundle") {
+    plugins.push(new BundleAnalyzerPlugin());
+}
 
 module.exports = {
     entry: path.resolve(__dirname, "./source/index.js"),
@@ -17,5 +23,7 @@ module.exports = {
         filename: "adframe.js",
         path: path.resolve(__dirname, "./dist"),
         libraryTarget: "commonjs2"
-    }
+    },
+
+    plugins
 };
