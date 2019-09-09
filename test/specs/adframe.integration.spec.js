@@ -1,5 +1,8 @@
 import {
     CONTENT_URL,
+    SECURITY_CUSTOM,
+    SECURITY_SANDBOX_NONFRIENDLY,
+    SECURITY_SANDBOX_SAMEORIGIN,
     WRITE_MODE_BLOB_URL,
     WRITE_MODE_DOC_WRITE,
     WRITE_MODE_SRCDOC,
@@ -84,6 +87,69 @@ describe("createAdFrame", function() {
             contentType: CONTENT_URL,
             onLoadCallback: () => {
                 expect(iframe.getAttribute("src")).to.equal("about:blank");
+                done();
+            }
+        });
+    });
+
+    it("positions last by default", function() {
+        const testEl = document.createElement("div");
+        this.container.appendChild(testEl);
+        createAdFrame({
+            parent: this.container,
+            content: "<p>Test</p>"
+        });
+        expect(this.container.children[1].tagName).to.match(/^iframe$/i);
+    });
+
+    it("positions first when configured", function() {
+        const testEl = document.createElement("div");
+        this.container.appendChild(testEl);
+        createAdFrame({
+            parent: this.container,
+            content: "<p>Test</p>",
+            position: "first"
+        });
+        expect(this.container.children[0].tagName).to.match(/^iframe$/i);
+    });
+
+    it("can sandbox, allowing same origin", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<p>test</p>",
+            security: SECURITY_SANDBOX_SAMEORIGIN,
+            onLoadCallback: () => {
+                const sandbox = iframe.getAttribute("sandbox");
+                expect(sandbox).to.match(/\ballow-scripts\b/);
+                expect(sandbox).to.match(/\ballow-same-origin\b/);
+                done();
+            }
+        });
+    });
+
+    it("can sandbox, disallowing same origin (non-friendly)", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<p>test</p>",
+            security: SECURITY_SANDBOX_NONFRIENDLY,
+            onLoadCallback: () => {
+                const sandbox = iframe.getAttribute("sandbox");
+                expect(sandbox).to.match(/\ballow-scripts\b/);
+                expect(sandbox).to.not.match(/\ballow-same-origin\b/);
+                done();
+            }
+        });
+    });
+
+    it("can sandbox with custom flags", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<p>test</p>",
+            sandboxFlags: ["allow-scripts"],
+            security: SECURITY_CUSTOM,
+            onLoadCallback: () => {
+                const sandbox = iframe.getAttribute("sandbox");
+                expect(sandbox).to.equal("allow-scripts");
                 done();
             }
         });
