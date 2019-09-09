@@ -18,7 +18,6 @@ const NOOP = () => {};
  * @property {String} content - The HTML content to insert, when in HTML content mode, or the
  *  URL to load when in URL content mode
  * @property {String=} contentType - The type of content to use - defaults to CONTENT_HTML
- * @property {HTMLDocument=} doc - The document to use for all element references
  * @property {Function=} onLoadCallback - Callback method to fire once the iframe has loaded
  * @property {HTMLElement} parent - The parent element to insert the iframe into
  * @property {String=} position - Insertion position. Either "first" among other children in
@@ -30,6 +29,7 @@ const NOOP = () => {};
  *  custom mode (SECURITY_CUSTOM)
  * @property {String=} security - The security mode to use for securing the iframe's contents.
  *  Defaults to SECURITY_NONE.
+ * @property {Window=} win - Window reference
  * @property {Array.<String>=} writeMethods - Write methods that can be used, in order of
  *  preference. If no write modes can be selected an error will be thrown.
  */
@@ -44,15 +44,16 @@ export function createAdFrame(options) {
     const {
         content,
         contentType = CONTENT_HTML,
-        doc = document,
         onLoadCallback = NOOP,
         parent,
         position = "last",
         restoreBuiltIns: runRestoreBuiltIns = true,
         sandboxFlags = [],
         security = SECURITY_NONE,
+        win = window,
         writeMethods = [...DEFAULT_WRITE_METHODS]
     } = options;
+    const doc = win.document;
     if (runRestoreBuiltIns) {
         restoreBuiltIns(doc);
     }
