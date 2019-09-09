@@ -9,6 +9,7 @@ import {
 import { restoreBuiltIns } from "./native.js";
 import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
+import { blobURLSupported, srcDocSupported } from "./features.js";
 
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
@@ -62,7 +63,13 @@ export function createAdFrame(options) {
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
         // document.write cannot be used when frame is non-friendly
-        availableWriteMethods = availableWriteMethods.filter(wm => wm !== WRITE_MODE_DOC_WRITE);
+        availableWriteMethods = removeArrayElement(availableWriteMethods, WRITE_MODE_DOC_WRITE);
+    }
+    if (!blobURLSupported()) {
+        availableWriteMethods = removeArrayElement(availableWriteMethods, WRITE_MODE_BLOB_URL);
+    }
+    if (!srcDocSupported()) {
+        availableWriteMethods = removeArrayElement(availableWriteMethods, WRITE_MODE_SRCDOC);
     }
     const [chosenWriteMethod] = availableWriteMethods;
     if (contentType === CONTENT_URL) {
@@ -97,6 +104,10 @@ export function createAdFrame(options) {
         writeDocumentContent(iframe, content);
     }
     return iframe;
+}
+
+function removeArrayElement(items, element) {
+    return items.filter(item => item !== element);
 }
 
 function setIframeBlobURL(iframe, content, mime = "text/html") {
