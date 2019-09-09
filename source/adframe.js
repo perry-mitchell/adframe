@@ -10,6 +10,7 @@ import { restoreBuiltIns } from "./native.js";
 import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 import { blobURLSupported, srcDocSupported } from "./features.js";
+import { injectBuiltInRestorer } from "./content.js";
 
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
@@ -43,7 +44,7 @@ const NOOP = () => {};
  */
 export function createAdFrame(options) {
     const {
-        content,
+        content: contentRaw,
         contentType = CONTENT_HTML,
         onLoadCallback = NOOP,
         parent,
@@ -55,8 +56,12 @@ export function createAdFrame(options) {
         writeMethods = [...DEFAULT_WRITE_METHODS]
     } = options;
     const doc = win.document;
+    let content = contentRaw;
     if (runRestoreBuiltIns) {
         restoreBuiltIns(doc);
+        if (contentType === CONTENT_HTML) {
+            content = injectBuiltInRestorer(content);
+        }
     }
     const iframe = doc.createElement("iframe");
     let availableWriteMethods = writeMethods;

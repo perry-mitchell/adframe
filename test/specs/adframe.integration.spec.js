@@ -154,4 +154,29 @@ describe("createAdFrame", function() {
             }
         });
     });
+
+    it("injects built-in restoration code", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.querySelector("[data-adframe=restorer]"))
+                    .to.have.property("tagName")
+                    .that.matches(/^script$/i);
+                done();
+            }
+        });
+    });
+
+    it("can disable built-in restoration code injection", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            restoreBuiltIns: false,
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.querySelector("[data-adframe=restorer]")).to.be.null;
+                done();
+            }
+        });
+    });
 });
