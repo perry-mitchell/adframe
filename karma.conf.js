@@ -52,10 +52,10 @@ module.exports = function(config) {
             type: "text-summary",
             check: {
                 global: {
-                    statements: 80,
+                    statements: 55,
                     branches: 20,
-                    functions: 80,
-                    lines: 80
+                    functions: 60,
+                    lines: 60
                 }
             },
             watermarks: {

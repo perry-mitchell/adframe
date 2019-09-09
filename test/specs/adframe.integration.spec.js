@@ -59,7 +59,9 @@ describe("createAdFrame", function() {
                 expect(iframe.contentWindow.document.querySelector("#test"))
                     .to.have.property("tagName")
                     .that.matches(/^div$/i);
-                expect(iframe.getAttribute("srcdoc").indexOf("<script>document.open()")).to.equal(0);
+                expect(iframe.getAttribute("srcdoc").indexOf("<script>document.open()")).to.equal(
+                    0
+                );
                 done();
             }
         });
@@ -174,7 +176,8 @@ describe("createAdFrame", function() {
             content: '<div id="test">',
             restoreBuiltIns: false,
             onLoadCallback: () => {
-                expect(iframe.contentWindow.document.querySelector("[data-adframe=restorer]")).to.be.null;
+                expect(iframe.contentWindow.document.querySelector("[data-adframe=restorer]")).to.be
+                    .null;
                 done();
             }
         });
@@ -183,7 +186,7 @@ describe("createAdFrame", function() {
     it("executes injected JS via blob URL write method", function(done) {
         const iframe = createAdFrame({
             parent: this.container,
-            content: "<script type=\"text/javascript\">\nwindow.codeExecuted = true;\n</script>",
+            content: '<script type="text/javascript">\nwindow.codeExecuted = true;\n</script>',
             writeMethods: [WRITE_MODE_BLOB_URL],
             onLoadCallback: () => {
                 expect(iframe.contentWindow).to.have.property("codeExecuted", true);
@@ -195,7 +198,7 @@ describe("createAdFrame", function() {
     it("executes injected JS via srcdoc write method", function(done) {
         const iframe = createAdFrame({
             parent: this.container,
-            content: "<script type=\"text/javascript\">\nwindow.codeExecuted = true;\n</script>",
+            content: '<script type="text/javascript">\nwindow.codeExecuted = true;\n</script>',
             writeMethods: [WRITE_MODE_SRCDOC],
             onLoadCallback: () => {
                 expect(iframe.contentWindow).to.have.property("codeExecuted", true);
@@ -207,7 +210,7 @@ describe("createAdFrame", function() {
     it("executes injected JS via document.write write method", function(done) {
         const iframe = createAdFrame({
             parent: this.container,
-            content: "<script type=\"text/javascript\">\nwindow.codeExecuted = true;\n</script>",
+            content: '<script type="text/javascript">\nwindow.codeExecuted = true;\n</script>',
             writeMethods: [WRITE_MODE_DOC_WRITE],
             onLoadCallback: () => {
                 expect(iframe.contentWindow).to.have.property("codeExecuted", true);
@@ -219,9 +222,12 @@ describe("createAdFrame", function() {
     it("restores overridden built-ins within iframes", function(done) {
         const iframe = createAdFrame({
             parent: this.container,
-            content: "<script type=\"text/javascript\">\nwindow.testFunc = function() {}; document.write = testFunc;\n</script>",
+            content:
+                '<script type="text/javascript">\nwindow.testFunc = function() {}; document.write = testFunc;\n</script>',
             onLoadCallback: () => {
-                expect(iframe.contentWindow.document.write).to.not.equal(iframe.contentWindow.testFunc);
+                expect(iframe.contentWindow.document.write).to.not.equal(
+                    iframe.contentWindow.testFunc
+                );
                 done();
             }
         });

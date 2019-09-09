@@ -1,5 +1,5 @@
 const path = require("path");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer")
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
 const plugins = [];
 if (process.env.ANALYZER === "bundle") {
