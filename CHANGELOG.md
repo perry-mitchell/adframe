@@ -1,5 +1,10 @@
 # AdFrame Changelog
 
+## v0.3.0
+_2019-09-09_
+
+ * `injections` option for injecting more content (body recognition)
+
 ## v0.2.0
 _2019-09-09_
 
