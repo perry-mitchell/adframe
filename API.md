@@ -8,6 +8,8 @@
 ## Typedefs
 
 <dl>
+<dt><a href="#AdFrameInjection">AdFrameInjection</a> : <code>Object</code></dt>
+<dd></dd>
 <dt><a href="#CreateAdFrameOptions">CreateAdFrameOptions</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
@@ -27,6 +29,17 @@ Create an adframe instance
 | --- | --- | --- |
 | options | [<code>CreateAdFrameOptions</code>](#CreateAdFrameOptions) | Creation options |
 
+<a name="AdFrameInjection"></a>
+
+## AdFrameInjection : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| content | <code>String</code> | The content to inject |
+| [prepend] | <code>Boolean</code> | Whether or not to prepend the injected content. Defaults to  false (append). |
+
 <a name="CreateAdFrameOptions"></a>
 
 ## CreateAdFrameOptions : <code>Object</code>
@@ -37,12 +50,13 @@ Create an adframe instance
 | --- | --- | --- |
 | content | <code>String</code> | The HTML content to insert, when in HTML content mode, or the  URL to load when in URL content mode |
 | [contentType] | <code>String</code> | The type of content to use - defaults to CONTENT_HTML |
-| [doc] | <code>HTMLDocument</code> | The document to use for all element references |
+| [injections] | [<code>Array.&lt;AdFrameInjection&gt;</code>](#AdFrameInjection) | Content injections to inject into the  provided content property by detecting <body> tags. |
 | [onLoadCallback] | <code>function</code> | Callback method to fire once the iframe has loaded |
 | parent | <code>HTMLElement</code> | The parent element to insert the iframe into |
 | [position] | <code>String</code> | Insertion position. Either "first" among other children in  the parent element or "last". |
 | [restoreBuiltIns] | <code>Boolean</code> | Restore built-in document/window methods if they're  detected as having been overridden. Defaults to true. Can help un-break pages where some  script has performed some nasty modifications to the page. |
 | [sandboxFlags] | <code>Array.&lt;String&gt;</code> | Custom sandbox flags to set when security is set to  custom mode (SECURITY_CUSTOM) |
 | [security] | <code>String</code> | The security mode to use for securing the iframe's contents.  Defaults to SECURITY_NONE. |
+| [win] | <code>Window</code> | Window reference |
 | [writeMethods] | <code>Array.&lt;String&gt;</code> | Write methods that can be used, in order of  preference. If no write modes can be selected an error will be thrown. |
 
