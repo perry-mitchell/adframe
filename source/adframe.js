@@ -83,7 +83,7 @@ export function createAdFrame(options) {
             throw new Error("No available write methods");
         } else if (chosenWriteMethod === WRITE_MODE_SRCDOC) {
             attachOnLoadListener(iframe, onLoadCallback);
-            setIframeSrcDoc(iframe, content);
+            setIframeSrcDoc(iframe, content, win);
         } else if (chosenWriteMethod === WRITE_MODE_BLOB_URL) {
             attachOnLoadListener(iframe, onLoadCallback);
             setIframeBlobURL(iframe, content);
@@ -116,7 +116,7 @@ function setIframeBlobURL(iframe, content, mime = "text/html") {
     iframe.setAttribute("src", url);
 }
 
-function setIframeSrcDoc(iframe, content) {
+function setIframeSrcDoc(iframe, content, win = window) {
     const encodedContent = win.btoa(encodeURIComponent(content));
     iframe.setAttribute(
         "srcdoc",

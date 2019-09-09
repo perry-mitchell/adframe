@@ -1,4 +1,5 @@
 import {
+    CONTENT_URL,
     WRITE_MODE_BLOB_URL,
     WRITE_MODE_DOC_WRITE,
     WRITE_MODE_SRCDOC,
@@ -46,6 +47,21 @@ describe("createAdFrame", function() {
         });
     });
 
+    it("renders content using srcdoc", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            writeMethods: [WRITE_MODE_SRCDOC],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.querySelector("#test"))
+                    .to.have.property("tagName")
+                    .that.matches(/^div$/i);
+                expect(iframe.getAttribute("srcdoc").indexOf("<script>document.open()")).to.equal(0);
+                done();
+            }
+        });
+    });
+
     it("renders content using document.write", function(done) {
         const iframe = createAdFrame({
             parent: this.container,
@@ -56,6 +72,18 @@ describe("createAdFrame", function() {
                     .to.have.property("tagName")
                     .that.matches(/^div$/i);
                 expect(iframe.getAttribute("src")).to.be.null;
+                done();
+            }
+        });
+    });
+
+    it("can render iframes using only a URL", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "about:blank",
+            contentType: CONTENT_URL,
+            onLoadCallback: () => {
+                expect(iframe.getAttribute("src")).to.equal("about:blank");
                 done();
             }
         });

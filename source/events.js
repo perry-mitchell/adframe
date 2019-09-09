@@ -4,7 +4,7 @@ export function attachOnLoadListener(frame, callback) {
     frame.onload = function() {
         if (!hasFired) {
             hasFired = true;
-            callback();
+            setTimeout(callback, 0);
         }
     };
     // Older browsers, like Internet Explorer:
@@ -12,7 +12,7 @@ export function attachOnLoadListener(frame, callback) {
         if (this.readyState === "complete" || this.readyState === "interactive") {
             if (!hasFired) {
                 hasFired = true;
-                callback();
+                setTimeout(callback, 0);
             }
         }
     };
