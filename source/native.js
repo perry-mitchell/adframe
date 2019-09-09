@@ -9,5 +9,13 @@ export function restoreBuiltIns(doc = document) {
         if (docProto[builtIn] !== doc[builtIn]) {
             doc[builtIn] = docProto[builtIn];
         }
+        try {
+            Object.defineProperty(doc, builtIn, {
+                configurable: false,
+                enumerable: false,
+                value: docProto[builtIn],
+                writable: false
+            });
+        } catch (err) {}
     });
 }
