@@ -10,16 +10,25 @@ import { restoreBuiltIns } from "./native.js";
 import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 import { blobURLSupported, srcDocSupported } from "./features.js";
-import { injectBuiltInRestorer } from "./content.js";
+import { injectBuiltInRestorer, injectHTML } from "./content.js";
 
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
+
+/**
+ * @typedef {Object} AdFrameInjection
+ * @property {String} content - The content to inject
+ * @property {Boolean=} prepend - Whether or not to prepend the injected content. Defaults to
+ *  false (append).
+ */
 
 /**
  * @typedef {Object} CreateAdFrameOptions
  * @property {String} content - The HTML content to insert, when in HTML content mode, or the
  *  URL to load when in URL content mode
  * @property {String=} contentType - The type of content to use - defaults to CONTENT_HTML
+ * @property {Array.<AdFrameInjection>=} injections - Content injections to inject into the
+ *  provided content property by detecting <body> tags.
  * @property {Function=} onLoadCallback - Callback method to fire once the iframe has loaded
  * @property {HTMLElement} parent - The parent element to insert the iframe into
  * @property {String=} position - Insertion position. Either "first" among other children in
@@ -46,6 +55,7 @@ export function createAdFrame(options) {
     const {
         content: contentRaw,
         contentType = CONTENT_HTML,
+        injections = [],
         onLoadCallback = NOOP,
         parent,
         position = "last",
@@ -59,9 +69,6 @@ export function createAdFrame(options) {
     let content = contentRaw;
     if (runRestoreBuiltIns) {
         restoreBuiltIns(doc);
-        if (contentType === CONTENT_HTML) {
-            content = injectBuiltInRestorer(content);
-        }
     }
     const iframe = doc.createElement("iframe");
     let availableWriteMethods = writeMethods;
@@ -81,6 +88,16 @@ export function createAdFrame(options) {
         attachOnLoadListener(iframe, onLoadCallback);
         iframe.setAttribute("src", content);
     } else if (contentType === CONTENT_HTML) {
+        injections.forEach(injection => {
+            content = injectHTML(
+                content,
+                injection.content,
+                typeof injection.prepend === "boolean" ? injection.prepend : false
+            );
+        });
+        if (runRestoreBuiltIns) {
+            content = injectBuiltInRestorer(content);
+        }
         if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
             iframe.setAttribute("src", "about:blank");
         }

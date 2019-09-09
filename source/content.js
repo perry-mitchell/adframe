@@ -4,7 +4,7 @@ export function injectBuiltInRestorer(html) {
     return injectHTML(html, restoreBuiltInsHTML, /* prepend: */ true);
 }
 
-function injectHTML(content, newHTML, prepend = false) {
+export function injectHTML(content, newHTML, prepend = false) {
     const bodyRexp = prepend ? /(<body[^>]*>)/im : /(<\/body>)/i;
     if (bodyRexp.test(content)) {
         return prepend

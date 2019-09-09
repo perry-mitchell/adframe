@@ -232,4 +232,23 @@ describe("createAdFrame", function() {
             }
         });
     });
+
+    it("renders injections", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: '<div id="test"></div>',
+            injections: [
+                { content: '<div id="before"></div>', prepend: true },
+                { content: '<div id="after"></div>' }
+            ],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.querySelector("#test")).to.not.be.null;
+                const elements = iframe.contentWindow.document.body.querySelectorAll("div");
+                expect(elements[0].getAttribute("id")).to.equal("before");
+                expect(elements[1].getAttribute("id")).to.equal("test");
+                expect(elements[2].getAttribute("id")).to.equal("after");
+                done();
+            }
+        });
+    });
 });
