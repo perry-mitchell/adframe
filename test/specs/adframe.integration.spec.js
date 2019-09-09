@@ -179,4 +179,51 @@ describe("createAdFrame", function() {
             }
         });
     });
+
+    it("executes injected JS via blob URL write method", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<script type=\"text/javascript\">\nwindow.codeExecuted = true;\n</script>",
+            writeMethods: [WRITE_MODE_BLOB_URL],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow).to.have.property("codeExecuted", true);
+                done();
+            }
+        });
+    });
+
+    it("executes injected JS via srcdoc write method", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<script type=\"text/javascript\">\nwindow.codeExecuted = true;\n</script>",
+            writeMethods: [WRITE_MODE_SRCDOC],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow).to.have.property("codeExecuted", true);
+                done();
+            }
+        });
+    });
+
+    it("executes injected JS via document.write write method", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<script type=\"text/javascript\">\nwindow.codeExecuted = true;\n</script>",
+            writeMethods: [WRITE_MODE_DOC_WRITE],
+            onLoadCallback: () => {
+                expect(iframe.contentWindow).to.have.property("codeExecuted", true);
+                done();
+            }
+        });
+    });
+
+    it("restores overridden built-ins within iframes", function(done) {
+        const iframe = createAdFrame({
+            parent: this.container,
+            content: "<script type=\"text/javascript\">\nwindow.testFunc = function() {}; document.write = testFunc;\n</script>",
+            onLoadCallback: () => {
+                expect(iframe.contentWindow.document.write).to.not.equal(iframe.contentWindow.testFunc);
+                done();
+            }
+        });
+    });
 });

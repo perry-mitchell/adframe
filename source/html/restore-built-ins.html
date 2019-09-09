@@ -1,13 +1,23 @@
 <script type="text/javascript" data-adframe="restorer">
 (function() {
+    var DOCUMENT_BUILTINS = ["createElement", "write"];
     if (!Object.getPrototypeOf || typeof Object.getPrototypeOf !== "function") {
         return;
     }
-    var docProto = Object.getPrototypeOf(doc);
+    var doc = document,
+        docProto = Object.getPrototypeOf(doc);
     DOCUMENT_BUILTINS.forEach(function(builtIn) {
         if (docProto[builtIn] !== doc[builtIn]) {
             doc[builtIn] = docProto[builtIn];
         }
+        try {
+            Object.defineProperty(doc, builtIn, {
+                configurable: false,
+                enumerable: false,
+                value: docProto[builtIn],
+                writable: false
+            });
+        } catch (err) {}
     });
 })();
 </script>
