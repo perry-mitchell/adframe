@@ -1,5 +1,12 @@
 # AdFrame Changelog
 
+## v0.6.0
+_2019-09-10_
+
+ * Break out `restoreBuiltIns` into two separate options:
+   * `restoreIframeBuiltIns` to work inside iframes (default true)
+   * `restorePageBuiltIns` to work in the current page (default false)
+
 ## v0.5.0
 _2019-09-10_
 
