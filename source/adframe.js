@@ -66,7 +66,8 @@ export function createAdFrame(options) {
         onLoadCallback = NOOP,
         parent,
         position = "last",
-        restoreBuiltIns: runRestoreBuiltIns = true,
+        restoreIframeBuiltIns = true,
+        restorePageBuiltIns = false,
         sandboxFlags = [],
         security = SECURITY_NONE,
         verifyLoad = false,
@@ -75,7 +76,7 @@ export function createAdFrame(options) {
     } = options;
     const doc = win.document;
     let content = contentRaw;
-    if (runRestoreBuiltIns) {
+    if (restorePageBuiltIns) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
@@ -105,7 +106,7 @@ export function createAdFrame(options) {
                 typeof injection.prepend === "boolean" ? injection.prepend : false
             );
         });
-        if (runRestoreBuiltIns) {
+        if (restoreIframeBuiltIns) {
             content = injectBuiltInRestorer(content);
         }
         if (willVerifyLoad) {

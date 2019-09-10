@@ -175,7 +175,7 @@ describe("createAdFrame", function() {
         const iframe = createAdFrame({
             parent: this.container,
             content: '<div id="test">',
-            restoreBuiltIns: false,
+            restoreIframeBuiltIns: false,
             onLoadCallback: () => {
                 expect(iframe.contentWindow.document.querySelector("[data-adframe=restorer]")).to.be
                     .null;

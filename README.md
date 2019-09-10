@@ -87,7 +87,9 @@ createAdFrame({
 
 ## Built-In Browser Method Restoration
 
-Some pages/scripts like to boast brand-safe ad-quality protection and the like, and can go as far as to override built-in methods like `document.write`, claiming this is so that they can control what ads are rendered. I, personally, don't trust third parties to make such a decision and risk forcing all scripts and third-parties on a page to use potentially unstable JavaScript to inject ad content. AdFrame, by default, removes overridden functions when detected. You can _disable_ this functionality by setting the `restoreBuiltIns` option to `false`.
+Some pages/scripts like to boast brand-safe ad-quality protection and the like, and can go as far as to override built-in methods like `document.write`, claiming this is so that they can control what ads are rendered. I, personally, don't trust third parties to make such a decision and risk forcing all scripts and third-parties on a page to use potentially unstable JavaScript to inject ad content. AdFrame, by default, removes overridden functions when detected. You can _disable_ this functionality by setting the `restoreIframeBuiltIns` option to `false`.
+
+The `restoreIframeBuiltIns` operates only within the confines of new iframes created using AdFrame, but you can also trigger method restoration on the global page by setting `restorePageBuiltIns` to `true` (defaults to `false`).
 
 ## Content Injection Methods
 
