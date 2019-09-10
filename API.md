@@ -17,6 +17,12 @@
 <a name="module_AdFrame"></a>
 
 ## AdFrame
+
+* [AdFrame](#module_AdFrame)
+    * [.exports.createAdFrame(options)](#module_AdFrame.exports.createAdFrame) ⇒ <code>HTMLIFrameElement</code>
+    * [.exports.blobURLSupported()](#module_AdFrame.exports.blobURLSupported) ⇒ <code>Boolean</code>
+    * [.exports.srcDocSupported()](#module_AdFrame.exports.srcDocSupported) ⇒ <code>Boolean</code>
+
 <a name="module_AdFrame.exports.createAdFrame"></a>
 
 ### AdFrame.exports.createAdFrame(options) ⇒ <code>HTMLIFrameElement</code>
@@ -29,6 +35,20 @@ Create an adframe instance
 | --- | --- | --- |
 | options | [<code>CreateAdFrameOptions</code>](#CreateAdFrameOptions) | Creation options |
 
+<a name="module_AdFrame.exports.blobURLSupported"></a>
+
+### AdFrame.exports.blobURLSupported() ⇒ <code>Boolean</code>
+Detect Blob URL support
+
+**Kind**: static method of [<code>AdFrame</code>](#module_AdFrame)  
+**Returns**: <code>Boolean</code> - True if supported  
+<a name="module_AdFrame.exports.srcDocSupported"></a>
+
+### AdFrame.exports.srcDocSupported() ⇒ <code>Boolean</code>
+Detect iframe srcdoc support
+
+**Kind**: static method of [<code>AdFrame</code>](#module_AdFrame)  
+**Returns**: <code>Boolean</code> - True if supported  
 <a name="AdFrameInjection"></a>
 
 ## AdFrameInjection : <code>Object</code>
@@ -57,6 +77,7 @@ Create an adframe instance
 | [restoreBuiltIns] | <code>Boolean</code> | Restore built-in document/window methods if they're  detected as having been overridden. Defaults to true. Can help un-break pages where some  script has performed some nasty modifications to the page. |
 | [sandboxFlags] | <code>Array.&lt;String&gt;</code> | Custom sandbox flags to set when security is set to  custom mode (SECURITY_CUSTOM) |
 | [security] | <code>String</code> | The security mode to use for securing the iframe's contents.  Defaults to SECURITY_NONE. |
+| [verifyLoad] | <code>Boolean</code> | Verify the contents as having been loaded by use of an  injected helper. Defaults to false. |
 | [win] | <code>Window</code> | Window reference |
 | [writeMethods] | <code>Array.&lt;String&gt;</code> | Write methods that can be used, in order of  preference. If no write modes can be selected an error will be thrown. |
 
