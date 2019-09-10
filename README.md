@@ -35,12 +35,27 @@ Iframes with URLs can also be created:
 import { CONTENT_URL, createAdFrame } from "adframe";
 
 createAdFrame({
-    content: "<div><p>Some content</p></div>",
+    content: "https://some-page.com",
     contentType: CONTENT_URL,
     parent: container,
     onLoadCallback: () => {
         console.log("Loaded!");
     }
+});
+```
+
+Iframes created by AdFrame are prepared, in terms of styling, before being inserted. This functionality can be overidden by changing the `onBeforeInsert` property to another function. You should, if you prefer that your iframe _looks_ good, still call the default styling function:
+
+```javascript
+import { createAdFrame, prepareIframe } from "adframe";
+
+createAdFrame({
+    content: "<div><p>Some content</p></div>",
+    onBeforeInsert: iframe => {
+        prepareIframe(iframe);
+        iframe.setAttribute("id", "my-iframe");
+    },
+    parent: container
 });
 ```
 
