@@ -251,4 +251,34 @@ describe("createAdFrame", function() {
             }
         });
     });
+
+    it("fires verified on-load callback when using blob URLs", function(done) {
+        createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            verifyLoad: true,
+            writeMethods: [WRITE_MODE_BLOB_URL],
+            onLoadCallback: done
+        });
+    });
+
+    it("fires verified on-load callback when using srcdoc", function(done) {
+        createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            verifyLoad: true,
+            writeMethods: [WRITE_MODE_SRCDOC],
+            onLoadCallback: done
+        });
+    });
+
+    it("fires verified on-load callback when using document.write", function(done) {
+        createAdFrame({
+            parent: this.container,
+            content: '<div id="test">',
+            verifyLoad: true,
+            writeMethods: [WRITE_MODE_DOC_WRITE],
+            onLoadCallback: done
+        });
+    });
 });

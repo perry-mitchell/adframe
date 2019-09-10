@@ -1,0 +1,11 @@
+<script type="text/javascript" data-adframe="verifier">
+(function() {
+    function handleWindowMessage(event) {
+        if (event.data && event.data === "AdFrame|request-verification") {
+            window.postMessage("AdFrame|verify", "*");
+            window.removeEventListener("message", handleWindowMessage, false);
+        }
+    }
+    window.addEventListener("message", handleWindowMessage, false);
+})();
+</script>

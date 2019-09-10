@@ -10,7 +10,7 @@ import { restoreBuiltIns } from "./native.js";
 import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 import { blobURLSupported, srcDocSupported } from "./features.js";
-import { injectBuiltInRestorer, injectHTML } from "./content.js";
+import { injectBuiltInRestorer, injectHTML, injectLoadVerifier } from "./content.js";
 
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
@@ -40,6 +40,8 @@ const NOOP = () => {};
  *  custom mode (SECURITY_CUSTOM)
  * @property {String=} security - The security mode to use for securing the iframe's contents.
  *  Defaults to SECURITY_NONE.
+ * @property {Boolean=} verifyLoad - Verify the contents as having been loaded by use of an
+ *  injected helper. Defaults to false.
  * @property {Window=} win - Window reference
  * @property {Array.<String>=} writeMethods - Write methods that can be used, in order of
  *  preference. If no write modes can be selected an error will be thrown.
@@ -62,6 +64,7 @@ export function createAdFrame(options) {
         restoreBuiltIns: runRestoreBuiltIns = true,
         sandboxFlags = [],
         security = SECURITY_NONE,
+        verifyLoad = false,
         win = window,
         writeMethods = [...DEFAULT_WRITE_METHODS]
     } = options;
@@ -71,6 +74,7 @@ export function createAdFrame(options) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
+    const attachOnLoad = () => attachOnLoadListener(iframe, onLoadCallback, verifyLoad);
     let availableWriteMethods = writeMethods;
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
@@ -85,7 +89,7 @@ export function createAdFrame(options) {
     }
     const [chosenWriteMethod] = availableWriteMethods;
     if (contentType === CONTENT_URL) {
-        attachOnLoadListener(iframe, onLoadCallback);
+        attachOnLoad();
         iframe.setAttribute("src", content);
     } else if (contentType === CONTENT_HTML) {
         injections.forEach(injection => {
@@ -98,16 +102,19 @@ export function createAdFrame(options) {
         if (runRestoreBuiltIns) {
             content = injectBuiltInRestorer(content);
         }
+        if (verifyLoad) {
+            content = injectLoadVerifier(content);
+        }
         if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
             iframe.setAttribute("src", "about:blank");
         }
         if (!chosenWriteMethod) {
             throw new Error("No available write methods");
         } else if (chosenWriteMethod === WRITE_MODE_SRCDOC) {
-            attachOnLoadListener(iframe, onLoadCallback);
+            attachOnLoad();
             setIframeSrcDoc(iframe, content, win);
         } else if (chosenWriteMethod === WRITE_MODE_BLOB_URL) {
-            attachOnLoadListener(iframe, onLoadCallback);
+            attachOnLoad();
             setIframeBlobURL(iframe, content);
         }
         // document.write is handled later, after DOM insertion
@@ -122,7 +129,7 @@ export function createAdFrame(options) {
         throw new Error(`Invalid insertion position: ${position}`);
     }
     if (chosenWriteMethod === WRITE_MODE_DOC_WRITE) {
-        setTimeout(onLoadCallback, 0);
+        attachOnLoad();
         writeDocumentContent(iframe, content);
     }
     return iframe;

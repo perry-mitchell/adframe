@@ -1,4 +1,5 @@
 import restoreBuiltInsHTML from "./html/restore-built-ins.html";
+import verifyLoadHTML from "./html/verify-load.html";
 
 export function injectBuiltInRestorer(html) {
     return injectHTML(html, restoreBuiltInsHTML, /* prepend: */ true);
@@ -12,4 +13,8 @@ export function injectHTML(content, newHTML, prepend = false) {
             : content.replace(bodyRexp, `${newHTML}$1`);
     }
     return prepend ? `${newHTML}${content}` : `${content}${newHTML}`;
+}
+
+export function injectLoadVerifier(html) {
+    return injectHTML(html, verifyLoadHTML);
 }
