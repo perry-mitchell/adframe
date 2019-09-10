@@ -74,7 +74,8 @@ export function createAdFrame(options) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
-    const attachOnLoad = () => attachOnLoadListener(iframe, onLoadCallback, verifyLoad);
+    const willVerifyLoad = verifyLoad && contentType === CONTENT_HTML;
+    const attachOnLoad = () => attachOnLoadListener(iframe, onLoadCallback, willVerifyLoad);
     let availableWriteMethods = writeMethods;
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
@@ -102,7 +103,7 @@ export function createAdFrame(options) {
         if (runRestoreBuiltIns) {
             content = injectBuiltInRestorer(content);
         }
-        if (verifyLoad) {
+        if (willVerifyLoad) {
             content = injectLoadVerifier(content);
         }
         if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
