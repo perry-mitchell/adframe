@@ -1,5 +1,11 @@
 # AdFrame Changelog
 
+## v0.4.0
+_2019-09-10_
+
+ * Expose `blobURLSupported` and `srcDocSupported` feature detection methods
+ * `verifyLoad` option
+
 ## v0.3.0
 _2019-09-09_
 
