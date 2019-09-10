@@ -6,7 +6,8 @@ import {
     WRITE_MODE_BLOB_URL,
     WRITE_MODE_DOC_WRITE,
     WRITE_MODE_SRCDOC,
-    createAdFrame
+    createAdFrame,
+    prepareIframe
 } from "../../source/index.js";
 
 describe("createAdFrame", function() {
@@ -280,5 +281,25 @@ describe("createAdFrame", function() {
             writeMethods: [WRITE_MODE_DOC_WRITE],
             onLoadCallback: done
         });
+    });
+
+    it("prepares iframe styling", function() {
+        const iframe = createAdFrame({
+            content: "<div><p>Some content</p></div>",
+            parent: this.container
+        });
+        expect(iframe.getAttribute("scrolling")).to.equal("no");
+    });
+
+    it("allows for overidding iframe preparation", function() {
+        const iframe = createAdFrame({
+            content: "<div><p>Some content</p></div>",
+            onBeforeInsert: iframe => {
+                prepareIframe(iframe);
+                iframe.setAttribute("id", "my-iframe");
+            },
+            parent: this.container
+        });
+        expect(iframe.getAttribute("id")).to.equal("my-iframe");
     });
 });

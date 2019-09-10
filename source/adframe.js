@@ -29,6 +29,10 @@ const NOOP = () => {};
  * @property {String=} contentType - The type of content to use - defaults to CONTENT_HTML
  * @property {Array.<AdFrameInjection>=} injections - Content injections to inject into the
  *  provided content property by detecting <body> tags.
+ * @property {Function=} onBeforeInsert - Callback fired before the iframe is inserted into
+ *  the page so that final processing can be performed. This defaults to `prepareIframe`, which
+ *  updates styles for the iframe so that it appears seamlessly in the page. Overriding this
+ *  property will disable this default processing.
  * @property {Function=} onLoadCallback - Callback method to fire once the iframe has loaded
  * @property {HTMLElement} parent - The parent element to insert the iframe into
  * @property {String=} position - Insertion position. Either "first" among other children in
@@ -58,6 +62,7 @@ export function createAdFrame(options) {
         content: contentRaw,
         contentType = CONTENT_HTML,
         injections = [],
+        onBeforeInsert = prepareIframe,
         onLoadCallback = NOOP,
         parent,
         position = "last",
@@ -122,6 +127,7 @@ export function createAdFrame(options) {
     } else {
         throw new Error(`Invalid iframe content type: ${contentType}`);
     }
+    onBeforeInsert(iframe);
     if (position === "first") {
         parent.insertBefore(iframe, parent.firstChild);
     } else if (position === "last") {
@@ -134,6 +140,19 @@ export function createAdFrame(options) {
         writeDocumentContent(iframe, content);
     }
     return iframe;
+}
+
+/**
+ * Prepare the iframe element (styles) before insertion into the DOM
+ * @param {HTMLIFrameElement} iframe The target iframe element
+ */
+export function prepareIframe(iframe) {
+    iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute("scrolling", "no");
+    iframe.setAttribute("align", "top");
+    iframe.setAttribute("marginwidth", "0");
+    iframe.setAttribute("marginheight", "0");
+    iframe.style.border = "none";
 }
 
 function removeArrayElement(items, element) {
