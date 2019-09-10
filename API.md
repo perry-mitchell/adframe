@@ -5,6 +5,14 @@
 <dd></dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#prepareIframe">prepareIframe(iframe)</a></dt>
+<dd><p>Prepare the iframe element (styles) before insertion into the DOM</p>
+</dd>
+</dl>
+
 ## Typedefs
 
 <dl>
@@ -49,6 +57,17 @@ Detect iframe srcdoc support
 
 **Kind**: static method of [<code>AdFrame</code>](#module_AdFrame)  
 **Returns**: <code>Boolean</code> - True if supported  
+<a name="prepareIframe"></a>
+
+## prepareIframe(iframe)
+Prepare the iframe element (styles) before insertion into the DOM
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| iframe | <code>HTMLIFrameElement</code> | The target iframe element |
+
 <a name="AdFrameInjection"></a>
 
 ## AdFrameInjection : <code>Object</code>
@@ -71,10 +90,12 @@ Detect iframe srcdoc support
 | content | <code>String</code> | The HTML content to insert, when in HTML content mode, or the  URL to load when in URL content mode |
 | [contentType] | <code>String</code> | The type of content to use - defaults to CONTENT_HTML |
 | [injections] | [<code>Array.&lt;AdFrameInjection&gt;</code>](#AdFrameInjection) | Content injections to inject into the  provided content property by detecting <body> tags. |
+| [onBeforeInsert] | <code>function</code> | Callback fired before the iframe is inserted into  the page so that final processing can be performed. This defaults to `prepareIframe`, which  updates styles for the iframe so that it appears seamlessly in the page. Overriding this  property will disable this default processing. |
 | [onLoadCallback] | <code>function</code> | Callback method to fire once the iframe has loaded |
 | parent | <code>HTMLElement</code> | The parent element to insert the iframe into |
 | [position] | <code>String</code> | Insertion position. Either "first" among other children in  the parent element or "last". |
-| [restoreBuiltIns] | <code>Boolean</code> | Restore built-in document/window methods if they're  detected as having been overridden. Defaults to true. Can help un-break pages where some  script has performed some nasty modifications to the page. |
+| [restoreIframeBuiltIns] | <code>Boolean</code> | Restore built-in document/window methods if they're  detected as having been overridden. Defaults to true. Can help un-break pages where some  script has performed some nasty modifications to the page. Operates ONLY within created  iframes. |
+| [restorePageBuiltIns] | <code>Boolean</code> | Same as `restoreIframeBuiltIns`, but works on the  parent, containing page (current document) instead. Defaults to false. |
 | [sandboxFlags] | <code>Array.&lt;String&gt;</code> | Custom sandbox flags to set when security is set to  custom mode (SECURITY_CUSTOM) |
 | [security] | <code>String</code> | The security mode to use for securing the iframe's contents.  Defaults to SECURITY_NONE. |
 | [verifyLoad] | <code>Boolean</code> | Verify the contents as having been loaded by use of an  injected helper. Defaults to false. |

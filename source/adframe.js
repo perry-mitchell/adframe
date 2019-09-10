@@ -37,9 +37,12 @@ const NOOP = () => {};
  * @property {HTMLElement} parent - The parent element to insert the iframe into
  * @property {String=} position - Insertion position. Either "first" among other children in
  *  the parent element or "last".
- * @property {Boolean=} restoreBuiltIns - Restore built-in document/window methods if they're
+ * @property {Boolean=} restoreIframeBuiltIns - Restore built-in document/window methods if they're
  *  detected as having been overridden. Defaults to true. Can help un-break pages where some
- *  script has performed some nasty modifications to the page.
+ *  script has performed some nasty modifications to the page. Operates ONLY within created
+ *  iframes.
+ * @property {Boolean=} restorePageBuiltIns - Same as `restoreIframeBuiltIns`, but works on the
+ *  parent, containing page (current document) instead. Defaults to false.
  * @property {Array.<String>=} sandboxFlags - Custom sandbox flags to set when security is set to
  *  custom mode (SECURITY_CUSTOM)
  * @property {String=} security - The security mode to use for securing the iframe's contents.
