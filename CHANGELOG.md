@@ -1,5 +1,11 @@
 # AdFrame Changelog
 
+## v0.5.0
+_2019-09-10_
+
+ * Iframe preparation before insertion using `onBeforeInsert` option
+ * Expose `prepareIframe` method for custom iframe preparation callbacks
+
 ## v0.4.0
 _2019-09-10_
 
