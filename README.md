@@ -104,6 +104,10 @@ createAdFrame({
 });
 ```
 
+## Verifying Load State
+
+AdFrame can further verify that iframe content was loaded by using `postMessage` to ping an injected internal script. Enable this functionality by using the `verifyLoad` option. Defaults to `false`.
+
 ## Browser Support
 
 IE 10 and newer.
