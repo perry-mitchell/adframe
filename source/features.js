@@ -16,7 +16,7 @@ let __srcDocSupported = null,
  */
 export function blobURLSupported() {
     return (
-        __cspBlocksBlobURLs !== false &&
+        __cspBlocksBlobURLs !== true &&
         typeof Blob === "function" &&
         (typeof URL === "function" || typeof webkitURL === "function")
     );
