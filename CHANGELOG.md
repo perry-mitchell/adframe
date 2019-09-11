@@ -1,5 +1,12 @@
 # AdFrame Changelog
 
+## v0.7.0
+_2019-09-11_
+
+ * Content-Security-Policy detection (blocking `frame-src`) via `detectCSPBlocking` method
+ * 2-way communications via `sendMessage` and `onMessage`
+ * Support for `webkitURL`
+
 ## v0.6.0
 _2019-09-10_
 
