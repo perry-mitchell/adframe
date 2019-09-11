@@ -1,6 +1,6 @@
 {
   "name": "adframe",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Iframe control system designed for iframes that contain ads",
   "main": "dist/adframe.js",
   "scripts": {
