@@ -1,6 +1,7 @@
 import { attachOnLoadListener } from "./events.js";
 import { setIframeBlobURL } from "./inject.js";
-import { injectLoadVerifier } from "./content.js";
+import { injectComms, injectLoadVerifier } from "./content.js";
+import { establishComms } from "./comms.js";
 
 const CSP_VIOLATION_EVENT = "securitypolicyviolation";
 const NOOP = () => {};
@@ -39,17 +40,25 @@ export function detectCSPBlocking(callback = NOOP, doc = document) {
     };
     doc.addEventListener(CSP_VIOLATION_EVENT, handleBlockEvent);
     const iframe = doc.createElement("iframe");
-    attachOnLoadListener(iframe, function() {
-        if (__cspBlocksBlobURLs !== null) {
-            return;
-        }
-        __cspBlocksBlobURLs = false;
-        doc.removeEventListener(CSP_VIOLATION_EVENT, handleBlockEvent);
-        callback(false);
-    }, /* verify: */ true);
+    const id = `csp_${Date.now()}_${Math.floor(Math.random() * 9000000)}`;
+    const comms = establishComms(id);
+    attachOnLoadListener(
+        iframe,
+        comms,
+        function() {
+            if (__cspBlocksBlobURLs !== null) {
+                return;
+            }
+            __cspBlocksBlobURLs = false;
+            doc.removeEventListener(CSP_VIOLATION_EVENT, handleBlockEvent);
+            callback(false);
+        },
+        /* verify: */ true
+    );
     iframe.setAttribute("style", "display:none");
     iframe.setAttribute("data-adframe", "csp-test");
-    const content = injectLoadVerifier("<!-- Verify CSP -->");
+    let content = injectLoadVerifier("<!-- Verify CSP -->");
+    content = injectComms(content, id);
     setIframeBlobURL(iframe, content);
     doc.body.appendChild(iframe);
 }

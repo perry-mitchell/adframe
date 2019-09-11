@@ -302,4 +302,26 @@ describe("createAdFrame", function() {
         });
         expect(iframe.getAttribute("id")).to.equal("my-iframe");
     });
+
+    it("provides a communication interface for contained scripts", function(done) {
+        const { onMessage, sendMessage } = createAdFrame({
+            content: `
+                <script type="text/javascript">
+                    window.AdFrame.onMessage(function(msg) {
+                        if (msg.type === "sendBack") {
+                            window.AdFrame.sendMessage({ type: "done" });
+                        }
+                    });
+                </script>
+            `,
+            parent: this.container
+            // verifyLoad: true
+        });
+        onMessage(msg => {
+            if (msg.type === "done") {
+                done();
+            }
+        });
+        sendMessage({ type: "sendBack" });
+    });
 });

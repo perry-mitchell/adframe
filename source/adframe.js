@@ -92,10 +92,7 @@ export function createAdFrame(options) {
     iframe.setAttribute("data-adframe-id", id);
     // Establish communication channel
     const comms = establishComms(id);
-    const {
-        onMessage,
-        sendMessage
-    } = comms;
+    const { onMessage, sendMessage } = comms;
     const willVerifyLoad = verifyLoad && contentType === CONTENT_HTML;
     const attachOnLoad = () => attachOnLoadListener(iframe, comms, onLoadCallback, willVerifyLoad);
     let availableWriteMethods = writeMethods;

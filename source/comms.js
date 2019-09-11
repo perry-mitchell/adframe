@@ -51,7 +51,11 @@ export function establishComms(frameID, win = window) {
         targetWindow.postMessage(messagePrefix + JSON.stringify(msg));
     };
     win.addEventListener("message", event => {
-        if (event.data && typeof event.data === "string" && event.data.indexOf(messagePrefix) === 0) {
+        if (
+            event.data &&
+            typeof event.data === "string" &&
+            event.data.indexOf(messagePrefix) === 0
+        ) {
             targetWindow = targetWindow || event.source;
             if (queuedSends.length > 0) {
                 queuedSends.forEach(msg => sendMessage(msg));
