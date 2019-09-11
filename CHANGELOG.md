@@ -1,5 +1,11 @@
 # AdFrame Changelog
 
+## v0.7.2
+_2019-09-11_
+
+ * **Bugfix**:
+   * CSP detection state was inverted - would check repeatedly and not disable `WRITE_MODE_BLOB_URL`
+
 ## v0.7.1
 _2019-09-11_
 
