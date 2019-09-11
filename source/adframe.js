@@ -10,8 +10,10 @@ import { restoreBuiltIns } from "./native.js";
 import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 import { blobURLSupported, srcDocSupported } from "./features.js";
-import { injectBuiltInRestorer, injectHTML, injectLoadVerifier } from "./content.js";
+import { injectBuiltInRestorer, injectComms, injectHTML, injectLoadVerifier } from "./content.js";
 import { setIframeBlobURL, setIframeSrcDoc, writeDocumentContent } from "./inject.js";
+import { generateID } from "./id.js";
+import { establishComms } from "./comms.js";
 
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
@@ -65,6 +67,7 @@ export function createAdFrame(options) {
     const {
         content: contentRaw,
         contentType = CONTENT_HTML,
+        id = `adframe_${generateID()}`,
         injections = [],
         onBeforeInsert = prepareIframe,
         onLoadCallback = NOOP,
@@ -84,8 +87,14 @@ export function createAdFrame(options) {
         restoreBuiltIns(doc);
     }
     const iframe = doc.createElement("iframe");
+    iframe.setAttribute("data-adframe-id", id);
+    const comms = establishComms(id);
+    const {
+        onMessage,
+        sendMessage
+    } = comms;
     const willVerifyLoad = verifyLoad && contentType === CONTENT_HTML;
-    const attachOnLoad = () => attachOnLoadListener(iframe, onLoadCallback, willVerifyLoad);
+    const attachOnLoad = () => attachOnLoadListener(iframe, comms, onLoadCallback, willVerifyLoad);
     let availableWriteMethods = writeMethods;
     const appliedSandboxing = applySecurityMeasures(iframe, security, sandboxFlags);
     if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
@@ -116,6 +125,8 @@ export function createAdFrame(options) {
         if (willVerifyLoad) {
             content = injectLoadVerifier(content);
         }
+        // Inject comms last (first in body)
+        content = injectComms(content, id);
         if (appliedSandboxing && appliedSandboxing.indexOf("allow-same-origin") === -1) {
             iframe.setAttribute("src", "about:blank");
         }
@@ -144,6 +155,8 @@ export function createAdFrame(options) {
         attachOnLoad();
         writeDocumentContent(iframe, content);
     }
+    iframe.onMessage = onMessage;
+    iframe.sendMessage = sendMessage;
     return iframe;
 }
 

@@ -1,0 +1,31 @@
+<script type="text/javascript" data-adframe="comms">
+(function() {
+    var frameID = "[FRAME_ID]",
+        messageListeners = [],
+        messagePrefix = "AdFrame|" + encodeURIComponent(frameID) + "|";
+    window.AdFrame = window.AdFrame || {};
+    window.AdFrame.onMessage = function onMessage(callback) {
+        messageListeners.push(callback);
+        return function remove() {
+            var idx = messageListeners.indexOf(callback);
+            if (idx >= 0) {
+                messageListeners.splice(idx, 1);
+            }
+        };
+    };
+    var sendMessage = window.AdFrame.sendMessage = function sendMessage(payload) {
+        window.parent.postMessage(messagePrefix + JSON.stringify(payload));
+    };
+    window.addEventListener("message", function handleMessage(event) {
+        if (event.data && typeof event.data === "string" && event.data.indexOf(messagePrefix) === 0) {
+            var msg = JSON.parse(event.data.replace(messagePrefix, ""));
+            messageListeners.forEach(function(cb) {
+                try {
+                    cb(msg);
+                } catch (err) {}
+            });
+        }
+    });
+    sendMessage({ type: "" });
+})();
+</script>

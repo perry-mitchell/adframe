@@ -1,11 +1,11 @@
 <script type="text/javascript" data-adframe="verifier">
 (function() {
-    function handleWindowMessage(event) {
-        if (event.data && event.data === "AdFrame|request-verification") {
-            window.postMessage("AdFrame|verify", "*");
-            window.removeEventListener("message", handleWindowMessage, false);
+    window.AdFrame.onMessage(function(msg) {
+        if (msg.type === "request-verification") {
+            window.AdFrame.sendMessage({
+                type: "verify"
+            });
         }
-    }
-    window.addEventListener("message", handleWindowMessage, false);
+    });
 })();
 </script>
