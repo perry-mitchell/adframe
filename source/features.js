@@ -6,7 +6,9 @@ let __srcDocSupported = null;
  * @memberof module:AdFrame
  */
 export function blobURLSupported() {
-    return typeof Blob === "function" && typeof URL === "function";
+    return (
+        typeof Blob === "function" && (typeof URL === "function" || typeof webkitURL === "function")
+    );
 }
 
 /**

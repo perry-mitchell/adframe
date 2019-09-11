@@ -165,7 +165,7 @@ function removeArrayElement(items, element) {
 
 function setIframeBlobURL(iframe, content, mime = "text/html") {
     const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
+    const url = (URL || webkitURL).createObjectURL(blob);
     iframe.setAttribute("src", url);
 }
 
