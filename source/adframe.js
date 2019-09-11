@@ -11,6 +11,7 @@ import { attachOnLoadListener } from "./events.js";
 import { applySecurityMeasures } from "./security.js";
 import { blobURLSupported, srcDocSupported } from "./features.js";
 import { injectBuiltInRestorer, injectHTML, injectLoadVerifier } from "./content.js";
+import { setIframeBlobURL, setIframeSrcDoc, writeDocumentContent } from "./inject.js";
 
 const DEFAULT_WRITE_METHODS = [WRITE_MODE_BLOB_URL, WRITE_MODE_SRCDOC, WRITE_MODE_DOC_WRITE];
 const NOOP = () => {};
@@ -161,25 +162,4 @@ export function prepareIframe(iframe) {
 
 function removeArrayElement(items, element) {
     return items.filter(item => item !== element);
-}
-
-function setIframeBlobURL(iframe, content, mime = "text/html") {
-    const blob = new Blob([content], { type: mime });
-    const url = (URL || webkitURL).createObjectURL(blob);
-    iframe.setAttribute("src", url);
-}
-
-function setIframeSrcDoc(iframe, content, win = window) {
-    const encodedContent = win.btoa(encodeURIComponent(content));
-    iframe.setAttribute(
-        "srcdoc",
-        `<script>document.open(); document.write(decodeURIComponent(atob('${encodedContent}'))); document.close();</script>`
-    );
-}
-
-function writeDocumentContent(iframe, content) {
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(content);
-    doc.close();
 }
