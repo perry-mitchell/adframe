@@ -11,6 +11,14 @@
 <dt><a href="#prepareIframe">prepareIframe(iframe)</a></dt>
 <dd><p>Prepare the iframe element (styles) before insertion into the DOM</p>
 </dd>
+<dt><a href="#establishComms">establishComms(frameID, [win])</a> ⇒ <code><a href="#Comms">Comms</a></code></dt>
+<dd><p>Establish a communication channel with the remote iframe
+(Waits for a ping from the iframe FIRST before 2-way comms can be
+configured)</p>
+</dd>
+<dt><a href="#detectCSPBlocking">detectCSPBlocking([callback], [doc])</a></dt>
+<dd><p>Detect any Content-Security-Policy blocking that affects blob-URLs</p>
+</dd>
 </dl>
 
 ## Typedefs
@@ -19,6 +27,8 @@
 <dt><a href="#AdFrameInjection">AdFrameInjection</a> : <code>Object</code></dt>
 <dd></dd>
 <dt><a href="#CreateAdFrameOptions">CreateAdFrameOptions</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#Comms">Comms</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
 
@@ -68,6 +78,33 @@ Prepare the iframe element (styles) before insertion into the DOM
 | --- | --- | --- |
 | iframe | <code>HTMLIFrameElement</code> | The target iframe element |
 
+<a name="establishComms"></a>
+
+## establishComms(frameID, [win]) ⇒ [<code>Comms</code>](#Comms)
+Establish a communication channel with the remote iframe
+(Waits for a ping from the iframe FIRST before 2-way comms can be
+configured)
+
+**Kind**: global function  
+**Returns**: [<code>Comms</code>](#Comms) - Comms instance  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| frameID | <code>String</code> | The unique AdFrame ID |
+| [win] | <code>Window</code> | Optional window reference to place the listener |
+
+<a name="detectCSPBlocking"></a>
+
+## detectCSPBlocking([callback], [doc])
+Detect any Content-Security-Policy blocking that affects blob-URLs
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [callback] | <code>function</code> | Callback function to fire when detection has completed |
+| [doc] | <code>HTMLDocument</code> | Optional document reference |
+
 <a name="AdFrameInjection"></a>
 
 ## AdFrameInjection : <code>Object</code>
@@ -89,6 +126,7 @@ Prepare the iframe element (styles) before insertion into the DOM
 | --- | --- | --- |
 | content | <code>String</code> | The HTML content to insert, when in HTML content mode, or the  URL to load when in URL content mode |
 | [contentType] | <code>String</code> | The type of content to use - defaults to CONTENT_HTML |
+| [id] | <code>String</code> | Optional ID override. Defaults to dynamically generated UNIQUE  ID that is used for window-communication. |
 | [injections] | [<code>Array.&lt;AdFrameInjection&gt;</code>](#AdFrameInjection) | Content injections to inject into the  provided content property by detecting <body> tags. |
 | [onBeforeInsert] | <code>function</code> | Callback fired before the iframe is inserted into  the page so that final processing can be performed. This defaults to `prepareIframe`, which  updates styles for the iframe so that it appears seamlessly in the page. Overriding this  property will disable this default processing. |
 | [onLoadCallback] | <code>function</code> | Callback method to fire once the iframe has loaded |
@@ -102,3 +140,46 @@ Prepare the iframe element (styles) before insertion into the DOM
 | [win] | <code>Window</code> | Window reference |
 | [writeMethods] | <code>Array.&lt;String&gt;</code> | Write methods that can be used, in order of  preference. If no write modes can be selected an error will be thrown. |
 
+<a name="Comms"></a>
+
+## Comms : <code>Object</code>
+**Kind**: global typedef  
+
+* [Comms](#Comms) : <code>Object</code>
+    * [.onMessage(cb)](#Comms.onMessage)
+    * [.sendMessage(msg)](#Comms.sendMessage)
+
+<a name="Comms.onMessage"></a>
+
+### Comms.onMessage(cb)
+Listen for messages
+
+**Kind**: static method of [<code>Comms</code>](#Comms)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cb | <code>function</code> | Callback method to attach as a listener. Is called with message  objects. |
+
+**Example**  
+```js
+onMessage(msg => {
+         if (msg.type === "something") {
+             sendMessage({ type: "response" });
+         }
+     });
+```
+<a name="Comms.sendMessage"></a>
+
+### Comms.sendMessage(msg)
+Send a message to the remote window
+
+**Kind**: static method of [<code>Comms</code>](#Comms)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Object</code> | The message to send |
+
+**Example**  
+```js
+sendMessage({ type: "information", value: 123, another: true });
+```

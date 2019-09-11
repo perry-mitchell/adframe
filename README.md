@@ -85,6 +85,44 @@ createAdFrame({
 });
 ```
 
+## Messaging
+
+AdFrame establishes a 2-way communication channel between iframe windows and the context where the AdFrame instance was created. This channel can be used to send messages directly to and from the contained window without the need to do all of the `window.postMessage` preparation yourself.
+
+From within the iframe, use the following methods:
+
+```javascript
+window.AdFrame.sendMessage({ type: "something" });
+
+window.AdFrame.onmessage(msg => {
+    if (msg.type === "response") {
+        // ...
+    }
+});
+```
+
+From the context where the AdFrame was created:
+
+```javascript
+import { createAdFrame } from "adframe";
+
+const iframe = createAdFrame({
+    content: "<script>...</script>",
+    parent: container
+});
+const { sendMessage, onMessage } = iframe;
+
+sendMessage({ type: "hello", customProp: true });
+
+onMessage(msg => {
+    if (msg.type === "query") {
+        sendMessage({ type: "response" });
+    }
+});
+```
+
+The messaging interface works even if iframe sandboxing is configured.
+
 ## Built-In Browser Method Restoration
 
 Some pages/scripts like to boast brand-safe ad-quality protection and the like, and can go as far as to override built-in methods like `document.write`, claiming this is so that they can control what ads are rendered. I, personally, don't trust third parties to make such a decision and risk forcing all scripts and third-parties on a page to use potentially unstable JavaScript to inject ad content. AdFrame, by default, removes overridden functions when detected. You can _disable_ this functionality by setting the `restoreIframeBuiltIns` option to `false`.
@@ -100,6 +138,34 @@ AdFrame comes with a variety of ways to inject HTML content into an iframe, and 
  * `WRITE_MODE_DOC_WRITE`: Use `document.write` to inject content (not available when using sandboxing)
 
 It is recommended to leave `writeMethods` to the default value in most cases, as it will auto-detect what's best for the current environment and content.
+
+### Checking Compatibility
+
+It is **vital** that, when running in unknown environments, that you first check for compatibility for running configurations such as `WRITE_MODE_BLOB_URL`. `WRITE_MODE_BLOB_URL` requires that a Content-Security-Policy is _not_ set up to block certain `frame-src` values. For instance - the following HTTP header would break `WRITE_MODE_BLOB_URL`:
+
+```
+content-security-policy: frame-src https:;
+```
+
+To get around this, you _could_ simply disable `WRITE_MODE_BLOB_URL` by omitting it, but that could prove quite cumbersome. Instead you could use the `detectCSPBlocking` method to process this detection early-on:
+
+```javascript
+import { createAdFrame, detectCSPBlocking } from "adframe";
+
+function buildFrame() {
+    return doSomethingElse()
+        .then(() => new Promise(resolve =>
+            detectCSPBlocking(resolve)
+        ))
+        .then(() => createAdFrame({
+            // ...
+        }));
+}
+
+buildFrame();
+```
+
+The method only needs to be run once, and `createAdFrame` will internally strip out `WRITE_MODE_BLOB_URL` from future configurations.
 
 ## Injecting Extra Content/Snippets
 

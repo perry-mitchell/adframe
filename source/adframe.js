@@ -30,6 +30,8 @@ const NOOP = () => {};
  * @property {String} content - The HTML content to insert, when in HTML content mode, or the
  *  URL to load when in URL content mode
  * @property {String=} contentType - The type of content to use - defaults to CONTENT_HTML
+ * @property {String=} id - Optional ID override. Defaults to dynamically generated UNIQUE
+ *  ID that is used for window-communication.
  * @property {Array.<AdFrameInjection>=} injections - Content injections to inject into the
  *  provided content property by detecting <body> tags.
  * @property {Function=} onBeforeInsert - Callback fired before the iframe is inserted into
@@ -88,6 +90,7 @@ export function createAdFrame(options) {
     }
     const iframe = doc.createElement("iframe");
     iframe.setAttribute("data-adframe-id", id);
+    // Establish communication channel
     const comms = establishComms(id);
     const {
         onMessage,
@@ -143,6 +146,7 @@ export function createAdFrame(options) {
     } else {
         throw new Error(`Invalid iframe content type: ${contentType}`);
     }
+    // Prepare iframe element
     onBeforeInsert(iframe);
     if (position === "first") {
         parent.insertBefore(iframe, parent.firstChild);
@@ -155,6 +159,7 @@ export function createAdFrame(options) {
         attachOnLoad();
         writeDocumentContent(iframe, content);
     }
+    // Attach handy methods
     iframe.onMessage = onMessage;
     iframe.sendMessage = sendMessage;
     return iframe;
